@@ -31,24 +31,23 @@ function App() {
             )}
         </tbody>
       </table>
-      <Paginator></Paginator>
     </div>
   );
 }
 
-function Paginator() {
-  const itemsCount = todos.length;
-  const pagesCount = Math.ceil(itemsCount/50); // 50 is number of items per page 
-  const pagesNumbers = Array.from(new Array(pagesCount), (value, index) => index + 1);
-  console.log(pagesNumbers)
-  return (
-    <>
-    {pagesNumbers.map(number => 
-        <button type="button" class="btn btn-outline-primary" key={number}>{number}</button>
-      )}
-    </>
-  );
-}
+// function Paginator() {
+//   const itemsCount = todos.length;
+//   const pagesCount = Math.ceil(itemsCount/50); // 50 is number of items per page 
+//   const pagesNumbers = Array.from(new Array(pagesCount), (value, index) => index + 1);
+//   console.log(pagesNumbers)
+//   return (
+//     <>
+//     {pagesNumbers.map(number => 
+//         <button type="button" class="btn btn-outline-primary" key={number}>{number}</button>
+//       )}
+//     </>
+//   );
+// }
 
 // function Head(props) {
 //   return (
