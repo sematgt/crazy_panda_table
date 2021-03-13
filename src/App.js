@@ -1,6 +1,6 @@
 import './App.css';
 import todos from './data/todos';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function App() {
   const itemsCount = todos.length;
@@ -10,34 +10,61 @@ function App() {
 
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState('');
-  const [items, setItems] = useState(filterItemsByPage(page));
+  const [sort, setSort] = useState({
+    'column': 'userId',
+    'order': 'asc',
+  });
+  const [items, setItems] = useState(todos);
 
-  function handlePageChange(number, event) {
+  function handlePageChange(number) {
     setPage(number);
-    setItems(filterItemsByPage(number));
+  }
+  
+  function handleSort(column, order) {
+    setSort({column, order});
+    setItems(sortItemsBy(column, order));
   }
 
   function filterItemsByPage(number) {
-    return todos.filter((todo, index) => index < itemsPerPage * number && index >= itemsPerPage * (number - 1));
+    return items.filter((todo, index) => index < itemsPerPage * number && index >= itemsPerPage * (number - 1));
+  }
+
+  function sortItemsBy(column, order) {
+    if (items.length === 0) return items;
+    if (typeof items[0][column] === 'string') {
+      return items.slice().sort((a, b) => {
+        if (order === 'asc') {
+          return a[column] > b[column] ? 1 : -1;
+        } else {
+          return a[column] < b[column] ? 1 : -1;
+        }
+      })
+    } else {
+      return items.slice().sort((a, b) => order === 'asc' ? a[column] - b[column] : b[column] - a[column]);
+    }
   }
 
   return (
     <div className="App">
       <Paginator pagesNumbers={pagesNumbers} handlePageChange={handlePageChange}></Paginator>
       <table class="table caption-top">
-        <caption>Todos page {page}</caption>
+        <caption>Todos page {page} {sort.column} {sort.order}</caption>
         <thead>
           <tr>
-            <th scope="col">#</th>
-            {Object.keys(items[0]).map(key =>
-              <th scope="col" key={key}>{key}</th>
+            {Object.keys(items[0]).map((key, index) =>
+              <th scope="col" key={index}>
+                <button type="button" class="btn btn-light" onClick={e => {
+                  handleSort(key, sort.order === 'asc' ? 'desc' : 'asc')
+                }}>
+                  {key}
+                </button>
+              </th>
               )}
           </tr>
         </thead>
         <tbody>
-          {items.map(todo => 
+          {filterItemsByPage(page).map(todo => 
             <tr key={todo.id}>
-              <th scope="row">{todo.id}</th>
                 {Object.entries(todo).map(([key, data], index) => 
                   <td key={index}>{data.toString()}</td> // .toString() is used to convert Boolean values to text
                   )}
@@ -54,12 +81,11 @@ function Paginator(props) {
     <nav>
     {props.pagesNumbers.map(number => 
         <button type="button" class="btn btn-outline-primary" key={number} onClick={e => {
-          console.log(e.target.parentNode.children);
           for (let element of e.target.parentNode.children) {
             element.classList.remove('active');
           }
           e.target.classList.add('active');
-          props.handlePageChange(number, e);
+          props.handlePageChange(number);
         }}>{number}</button>
       )}
     </nav>
