@@ -1,9 +1,12 @@
-import './App.css';
-import todos from './data/todos';
+import './Table.css';
+import todos from '../data/todos';
 import { useState } from 'react';
+import Paginator from './Paginator';
+import FilterInput from './FilterInput';
 
-function App() {
+function Table() {
 
+  // state
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState('');
   const [sort, setSort] = useState({
@@ -12,17 +15,12 @@ function App() {
   });
   const [items, setItems] = useState(todos);
 
+  // constants and settings
   const columnHeadings = todos[0] ? Object.keys(todos[0]) : ["no headings in data"];
   const itemsPerPage = 50;
-  var pageNumbers = getPageNumbers();
+  var pageNumbers = getPageNumbers(); // array of page numbers, starts from 1, i.e. [1, 2, 3, 4]
 
-  function getPageNumbers() {
-    const itemsCount = items.length;
-    const pagesCount = Math.ceil(itemsCount/itemsPerPage); 
-    const pageNumbers = Array.from(new Array(pagesCount), (value, index) => index + 1); // array of page numbers, starts from 1, i.e. [1, 2, 3, 4]
-    return pageNumbers;
-  }
-  
+  // handlers  
   function handlePageChange(number) {
     setPage(number);
   }
@@ -37,6 +35,14 @@ function App() {
     setPage(1);
     setFilter(text);
     setItems(todos.filter((item => item['title'].includes(text))));
+  }
+
+  // helper functions
+  function getPageNumbers() {
+    const itemsCount = items.length;
+    const pagesCount = Math.ceil(itemsCount/itemsPerPage); 
+    const pageNumbers = Array.from(new Array(pagesCount), (value, index) => index + 1); 
+    return pageNumbers;
   }
 
   function filterItemsByPage(number) {
@@ -63,7 +69,7 @@ function App() {
       <Paginator pageNumbers={pageNumbers} handlePageChange={handlePageChange}></Paginator>
       <FilterInput handleChange={e => handleTextFilter(e.target.value)}></FilterInput>
       <table class="table caption-top">
-        <caption>Todos page {page} {sort.column} {sort.order}</caption>
+        <caption>Todos page {page} sorted by {sort.column} {sort.order} {filter !== '' && <span>filtered by {filter}</span>}</caption>
         <thead>
           <tr>
             {columnHeadings.map((key, index) =>
@@ -94,31 +100,4 @@ function App() {
   );
 }
 
-function Paginator(props) {
-  return (
-    <nav>
-    {props.pageNumbers.map(number => 
-        <button type="button" class="btn btn-outline-primary" key={number} onClick={e => {
-          for (let element of e.target.parentNode.children) {
-            element.classList.remove('active');
-          }
-          e.target.classList.add('active');
-          props.handlePageChange(number);
-        }}>{number}</button>
-      )}
-    </nav>
-  );
-}
-
-function FilterInput(props) {
-  return (
-    <form onSubmit={e => e.preventDefault()}>
-      <label>
-        Title search:
-        <input type="text" onChange={e => props.handleChange(e)}></input> 
-      </label>
-    </form>
-  )
-}
-
-export default App;
+export default Table;
