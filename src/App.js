@@ -1,6 +1,6 @@
 import './App.css';
 import todos from './data/todos';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 function App() {
   const itemsCount = todos.length;
@@ -25,8 +25,13 @@ function App() {
     setItems(sortItemsBy(column, order));
   }
 
+  function handleTextFilter(text) {
+    setFilter(text);
+    setItems(todos.filter((item => item['title'].includes(text))));
+  }
+
   function filterItemsByPage(number) {
-    return items.filter((todo, index) => index < itemsPerPage * number && index >= itemsPerPage * (number - 1));
+    return items.filter((item, index) => index < itemsPerPage * number && index >= itemsPerPage * (number - 1));
   }
 
   function sortItemsBy(column, order) {
@@ -47,6 +52,7 @@ function App() {
   return (
     <div className="App">
       <Paginator pagesNumbers={pagesNumbers} handlePageChange={handlePageChange}></Paginator>
+      <FilterInput handleChange={e => handleTextFilter(e.target.value)}></FilterInput>
       <table class="table caption-top">
         <caption>Todos page {page} {sort.column} {sort.order}</caption>
         <thead>
@@ -90,6 +96,17 @@ function Paginator(props) {
       )}
     </nav>
   );
+}
+
+function FilterInput(props) {
+  return (
+    <form onSubmit={e => e.preventDefault()}>
+      <label>
+        Title search:
+        <input type="text" onChange={e => props.handleChange(e)}></input> 
+      </label>
+    </form>
+  )
 }
 
 export default App;
