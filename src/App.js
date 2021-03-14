@@ -3,6 +3,7 @@ import todos from './data/todos';
 import { useState } from 'react';
 
 function App() {
+  const columnHeadings = Object.keys(todos[0]);
   const itemsCount = todos.length;
   const itemsPerPage = 50;
   const pagesCount = Math.ceil(itemsCount/itemsPerPage); 
@@ -57,7 +58,7 @@ function App() {
         <caption>Todos page {page} {sort.column} {sort.order}</caption>
         <thead>
           <tr>
-            {Object.keys(items[0]).map((key, index) =>
+            {columnHeadings.map((key, index) =>
               <th scope="col" key={index}>
                 <button type="button" class="btn btn-light" onClick={e => {
                   handleSort(key, sort.order === 'asc' ? 'desc' : 'asc')
@@ -69,15 +70,18 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          {filterItemsByPage(page).map(todo => 
+          { items[0] 
+          ? filterItemsByPage(page).map(todo => 
             <tr key={todo.id}>
                 {Object.entries(todo).map(([key, data], index) => 
                   <td key={index}>{data.toString()}</td> // .toString() is used to convert Boolean values to text
                   )}
             </tr>
-            )}
+            )
+          : <span>No items</span>
+          }
         </tbody>
-      </table>
+      </table>   
     </div>
   );
 }
