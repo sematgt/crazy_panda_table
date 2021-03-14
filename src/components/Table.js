@@ -15,7 +15,7 @@ function Table() {
   });
   const [items, setItems] = useState(todos);
 
-  // constants and settings
+  // settings and calculations
   const columnHeadings = todos[0] ? Object.keys(todos[0]) : ["no headings in data"];
   const itemsPerPage = 50;
   var pageNumbers = getPageNumbers(); // array of page numbers, starts from 1, i.e. [1, 2, 3, 4]
