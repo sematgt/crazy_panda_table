@@ -12,14 +12,14 @@ function App() {
   });
   const [items, setItems] = useState(todos);
 
-  const columnHeadings = Object.keys(todos[0]);
+  const columnHeadings = todos[0] ? Object.keys(todos[0]) : ["no headings in data"];
   const itemsPerPage = 50;
   var pageNumbers = getPageNumbers();
 
   function getPageNumbers() {
     const itemsCount = items.length;
     const pagesCount = Math.ceil(itemsCount/itemsPerPage); 
-    const pageNumbers = Array.from(new Array(pagesCount), (value, index) => index + 1); // array of pages numbers, starts from 1, i.e. [1, 2, 3, 4]
+    const pageNumbers = Array.from(new Array(pagesCount), (value, index) => index + 1); // array of page numbers, starts from 1, i.e. [1, 2, 3, 4]
     return pageNumbers;
   }
   
